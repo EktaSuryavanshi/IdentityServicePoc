@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using Poc.Core;
 using Poc.Core.Models;
 using System.Net;
@@ -7,10 +9,12 @@ using System.Text.Json;
 
 namespace Poc.Api.Controllers
 {
+    [Authorize]
     [ApiController]
     [ApiVersion("1.0")]
     [ApiExplorerSettings(GroupName = "v1")]
     [Route("api/v{version:apiVersion}/[controller]")]
+    [EnableCors("AllowAll")]
     public class UserController : ControllerBase
     {
         private readonly IIdentityService service;

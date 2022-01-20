@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Okta.AspNetCore;
 using Poc.Api;
 using Poc.Infrastructure.Data;
 using Serilog;
@@ -17,7 +18,29 @@ builder.Host.UseSerilog((hostingContext, loggerConfiguration) =>
 builder.Services.AddDbContext<DataContext>(
     opt => opt.UseSqlServer(configuration["Data:ConnectionStrings:DefaultConnection"]));
 
+// Configuring CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+                        builder => builder.AllowAnyOrigin()
+                                          .AllowAnyMethod()
+                                          .AllowAnyHeader());
+});
+
+// Configuring Okta
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = OktaDefaults.ApiAuthenticationScheme;
+    options.DefaultChallengeScheme = OktaDefaults.ApiAuthenticationScheme;
+    options.DefaultSignInScheme = OktaDefaults.ApiAuthenticationScheme;
+})
+.AddOktaWebApi(new OktaWebApiOptions()
+{
+    OktaDomain = configuration["Okta:OktaDomain"],
+});
+
 builder.Services.AddApiServices();
+builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddMvc();
 
@@ -56,6 +79,12 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseRouting();
+
+app.UseCors("AllowAll");
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
