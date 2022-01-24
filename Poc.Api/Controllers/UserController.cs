@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Poc.Core;
 using Poc.Core.Models;
@@ -11,7 +10,7 @@ namespace Poc.Api.Controllers
 {
     [ApiController]
     [ApiVersion("1.0")]
-    //[ApiExplorerSettings(GroupName = "v1")]
+    [Authorize]
     [Route("api/v{version:apiVersion}/[controller]")]
     public class UserController : ControllerBase
     {
@@ -24,9 +23,7 @@ namespace Poc.Api.Controllers
             this.logger = logger;
         }
 
-        [Authorize]
         [HttpGet("userId/{id}")]
-        [EnableCors("AllowAll")]
         public ActionResult<BaseResponse<User>> GetUserByUserId(string id)
         {
             if (string.IsNullOrEmpty(id))

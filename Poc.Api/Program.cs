@@ -18,15 +18,6 @@ builder.Host.UseSerilog((hostingContext, loggerConfiguration) =>
 builder.Services.AddDbContext<DataContext>(
     opt => opt.UseSqlServer(configuration["Data:ConnectionStrings:DefaultConnection"]));
 
-// Configuring CORS
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll",
-                        builder => builder.AllowAnyOrigin()
-                                          .AllowAnyMethod()
-                                          .AllowAnyHeader());
-});
-
 // Configuring Okta
 var okta = configuration.GetSection("Okta").Get<Okta>();
 
@@ -78,8 +69,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseRouting();
-
-app.UseCors("AllowAll");
 
 app.UseAuthentication();
 
