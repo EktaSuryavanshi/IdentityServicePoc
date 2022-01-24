@@ -9,12 +9,10 @@ using System.Text.Json;
 
 namespace Poc.Api.Controllers
 {
-    [Authorize]
     [ApiController]
     [ApiVersion("1.0")]
-    [ApiExplorerSettings(GroupName = "v1")]
+    //[ApiExplorerSettings(GroupName = "v1")]
     [Route("api/v{version:apiVersion}/[controller]")]
-    [EnableCors("AllowAll")]
     public class UserController : ControllerBase
     {
         private readonly IIdentityService service;
@@ -26,7 +24,9 @@ namespace Poc.Api.Controllers
             this.logger = logger;
         }
 
+        [Authorize]
         [HttpGet("userId/{id}")]
+        [EnableCors("AllowAll")]
         public ActionResult<BaseResponse<User>> GetUserByUserId(string id)
         {
             if (string.IsNullOrEmpty(id))
