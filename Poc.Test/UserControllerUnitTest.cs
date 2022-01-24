@@ -73,7 +73,7 @@ public partial class UserControllerUnitTest
     [Fact]
     public void InvalidGuidId()
     {
-        var guidId = "ABCD1234";
+        var guidId = "01234567-1234-1234-1234-123456789123";
         var result = controller.GetUserById(guidId);
         Assert.IsType<NotFoundObjectResult>(result.Result);
     }
