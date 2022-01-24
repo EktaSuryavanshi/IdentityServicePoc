@@ -1,7 +1,7 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using Okta.AspNetCore;
 using Poc.Api;
 using Poc.Infrastructure.Data;
 using Serilog;
@@ -28,19 +28,16 @@ builder.Services.AddCors(options =>
 });
 
 // Configuring Okta
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = OktaDefaults.ApiAuthenticationScheme;
-    options.DefaultChallengeScheme = OktaDefaults.ApiAuthenticationScheme;
-    options.DefaultSignInScheme = OktaDefaults.ApiAuthenticationScheme;
-})
-.AddOktaWebApi(new OktaWebApiOptions()
-{
-    OktaDomain = configuration["Okta:OktaDomain"],
-});
+var okta = configuration.GetSection("Okta").Get<Okta>();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.Authority = okta.Authority;
+        options.Audience = okta.Audience;
+    });
 
 builder.Services.AddApiServices();
-builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddMvc();
 
