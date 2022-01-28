@@ -18,7 +18,7 @@ builder.Services.AddDbContext<DataContext>(
     opt => opt.UseSqlServer(configuration["Data:ConnectionStrings:DefaultConnection"]));
 
 // Configuring Okta
-var okta = configuration.GetSection("Okta").Get<Okta>();
+var okta = configuration.GetSection("Okta").Get<Poc.Api.Okta>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -45,6 +45,7 @@ builder.Services.AddSwaggerGen(options =>
         Description = "API v1 description"
     });
     options.DocumentFilter<ReplaceVersionWithExactValueInPath>();
+    options.OperationFilter<RemoveVersionFromParameter>();
 });
 
 var app = builder.Build();
